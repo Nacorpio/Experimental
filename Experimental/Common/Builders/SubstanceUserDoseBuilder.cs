@@ -25,6 +25,7 @@ namespace Experimental.Common.Builders
 
     public IUser User { get; set; }
     public Substance Substance { get; set; }
+    public SubstanceRouteType Route { get; set; }
 
     public DateTimeOffset? TakenAt { get; set; }
     public Mass? Amount { get; set; }
@@ -47,6 +48,12 @@ namespace Experimental.Common.Builders
       return this;
     }
 
+    public SubstanceUserDoseBuilder WithRoute(SubstanceRouteType value)
+    {
+      Route = value;
+      return this;
+    }
+
     public SubstanceUserDoseBuilder WithAmount(Mass value)
     {
       Amount = value;
@@ -60,7 +67,8 @@ namespace Experimental.Common.Builders
         UserId = User.Id,
         SubstanceGuid = Substance.Guid,
         TakenAt = TakenAt,
-        Amount = Amount
+        Amount = Amount,
+        Route = Route
       };
     }
   }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Discord;
 
 using Experimental.Common.Builders;
+using Experimental.Common.Extensions;
 using Experimental.Common.Objects.Data;
 
 using JetBrains.Annotations;
@@ -84,16 +85,16 @@ namespace Experimental.Common.Objects
       await Channel.SendMessageAsync(
         null, false,
         new EmbedBuilder()
-         .WithAuthor(Guild.Name, Guild.IconUrl)
          .WithTitle("The group session has started!")
          .WithDescription("The members of this group will now enjoy themselves with each other virtually!")
          .WithThumbnailUrl(Emotes.EmoteGroupSilhouette)
-         .WithFooter("Remember to stay hydrated", Emotes.EmoteDropletUrl)
-         .AddField("📄 **Notes**", 
+         .AddField("📄 **Notes**",
                    "In order to log that you take a substance you have to use a command. "
                  + "The command will depend on the route of administration that you use.\n\n"
                  + "If you for instance want to *snort* cocaine, you type:\n`+snort cocaine 0,1g`\n\n"
                  + "If you are one of the few who take it up the bum, you type:\n`+boof mdma 0,1g`")
+         .WithWaterInfo()
+         .WithGuildInfo(Guild)
          .WithCurrentTimestamp()
          .Build()
       );
@@ -116,11 +117,11 @@ namespace Experimental.Common.Objects
       await Channel.SendMessageAsync(
         null, false,
         new EmbedBuilder()
-         .WithAuthor(Guild.Name, Guild.IconUrl)
          .WithTitle("The group session has now ended!")
          .WithDescription($"The group session lasted for **{duration?.Days} days, {duration?.Hours} hours, {duration?.Minutes} minutes and {duration?.Seconds} seconds**")
          .WithThumbnailUrl(Emotes.EmoteGroupSilhouette)
-         .WithFooter("Remember to stay hydrated", Emotes.EmoteDropletUrl)
+         .WithWaterInfo()
+         .WithGuildInfo(Guild)
          .WithCurrentTimestamp()
          .Build()
       );

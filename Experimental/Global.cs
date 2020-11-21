@@ -5,14 +5,19 @@ using System.Reflection;
 using System.Threading.Tasks;
 
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 
 using Experimental.API;
 using Experimental.Common.Builders;
+using Experimental.Common.Collections;
 using Experimental.Common.Objects;
+using Experimental.Common.Objects.Data;
 using Experimental.Common.Storage;
 
 using JetBrains.Annotations;
+
+using UnitsNet.Units;
 
 namespace Experimental
 {
@@ -42,12 +47,17 @@ namespace Experimental
     /// <summary>
     /// Gets the global storage container.
     /// </summary>
-    public static readonly Store Store;
+    public static Store Store;
 
     /// <summary>
     /// Gets the guilds currently connected.
     /// </summary>
     public static readonly Dictionary<ulong, Community> CommunityIdMap;
+
+    /// <summary>
+    /// Gets the registered templates.
+    /// </summary>
+    public static readonly TemplateMap TemplateMap;
 
 
     /// <summary>
@@ -63,6 +73,8 @@ namespace Experimental
       StoreGuildIdMap = new Dictionary<long, Store>();
       StoreGuidMap = new Dictionary<Guid, Store>();
 
+      TemplateMap = new TemplateMap();
+
       Store = new Store();
 
       Client.GuildAvailable += OnGuildAvailable;
@@ -72,26 +84,22 @@ namespace Experimental
 
     internal static async Task PrepareStoresAsync()
     {
-      var a = Assembly.GetCallingAssembly();
-      var t = a.GetTypes();
-
-      var filtered = t.Where(
-        x => x.GetInterfaces()
-         .Any(
-            type =>
-              type == typeof(ManagedObject) &&
-              type.IsClass &&
-              !type.IsAbstract
-          )
-      );
-
-      var types = filtered as Type[] ?? filtered.ToArray();
-
       foreach (var guild in Client.Guilds)
       {
         var community = GetCommunity(guild);
 
-        foreach (var type in types)
+        foreach (var type in new[]
+        {
+          typeof (Substance),
+          typeof (Group),
+          typeof (GroupSession),
+          typeof (TextChat),
+          typeof (Community),
+          typeof (MessageReaction),
+          typeof (Profile),
+          typeof (SubstanceEntryData),
+          typeof (ChatMessage)
+        })
         {
           var store = community.Store;
 
@@ -101,6 +109,8 @@ namespace Experimental
           store.GetManager(type);
         }
       }
+
+      CreateSubstances();
     }
 
     /// <summary>
@@ -140,27 +150,6 @@ namespace Experimental
       }
 
       return store;
-    }
-
-    /// <summary>
-    /// Finds and returns a substance with the specified identifier.
-    /// </summary>
-    /// <param name="substanceGuid">The GUID of the substance to find.</param>
-    /// <returns>A reference to the substance, if found; otherwise, <c>null</c>.</returns>
-    public static Substance GetSubstance(Guid substanceGuid)
-    {
-      return Store.GetObject<Substance>(substanceGuid);
-    }
-
-    /// <summary>
-    /// Finds and returns a substance matching the specified name.
-    /// </summary>
-    /// <param name="substanceName">The name of the substance to find.</param>
-    /// <returns>A reference to the substance, if found; otherwise, <c>null</c>.</returns>
-    public static Substance GetSubstance([NotNull] string substanceName)
-    {
-      return Store.GetObjects<Substance>()
-       .FirstOrDefault(x => x.Name.Equals(substanceName, StringComparison.OrdinalIgnoreCase));
     }
 
     /// <summary>

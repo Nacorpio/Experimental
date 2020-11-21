@@ -7,6 +7,8 @@ using Experimental.API;
 using Experimental.Common.Objects;
 using Experimental.Common.Objects.Data;
 
+using JetBrains.Annotations;
+
 using UnitsNet.Units;
 
 namespace Experimental.Common.Builders
@@ -17,6 +19,7 @@ namespace Experimental.Common.Builders
     public SubstanceBuilder()
     {
       Aliases = new List<string>();
+      Entries = new List<SubstanceEntryData>();
     }
 
     public string Name { get; set; }
@@ -29,11 +32,19 @@ namespace Experimental.Common.Builders
 
     public Color Color { get; set; }
     public MassUnit BaseUnit { get; set; }
+
     public SubstanceCategory Category { get; set; }
+    public List<SubstanceEntryData> Entries { get; set; }
 
     public SubstanceBuilder WithName(string value)
     {
       Name = value;
+      return this;
+    }
+
+    public SubstanceBuilder AddEntry([NotNull] Action<SubstanceEntryDataBuilder> _)
+    {
+      Entries.Add(Global.Store.CreateObject<SubstanceEntryData, SubstanceEntryDataBuilder>(_));
       return this;
     }
 
@@ -43,9 +54,19 @@ namespace Experimental.Common.Builders
       return this;
     }
 
-    public SubstanceBuilder AddAliases(params string[] values)
+    public SubstanceBuilder AddAliases(IEnumerable<string> values)
     {
-      Aliases.AddRange(values);
+      if (values == null)
+      {
+        Aliases = new List<string>();
+        return this;
+      }
+
+      foreach (var value in values)
+      {
+        AddAlias(value);
+      }
+
       return this;
     }
 
@@ -91,17 +112,23 @@ namespace Experimental.Common.Builders
     /// <returns>A reference to the built object.</returns>
     public override Substance Build()
     {
-      return new Substance(Guid.NewGuid())
+      var substance = new Substance(
+        Name,
+        DisplayName,
+        Description,
+        Aliases.ToArray(),
+        ImageUrl,
+        Category,
+        BaseUnit,
+        Color
+      );
+
+      foreach (var data in Entries)
       {
-        Name = Name,
-        Aliases = Aliases.ToArray(),
-        DisplayName = DisplayName,
-        Description = Description,
-        ImageUrl = ImageUrl,
-        Color = Color,
-        BaseUnit = BaseUnit,
-        Category = Category
-      };
+        data.Substance = substance;
+      }
+
+      return substance;
     }
   }
 

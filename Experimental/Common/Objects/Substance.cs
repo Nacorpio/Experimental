@@ -4,6 +4,7 @@ using Discord;
 
 using Experimental.Common.Builders;
 using Experimental.Common.Objects.Data;
+using Experimental.Common.Storage;
 
 using JetBrains.Annotations;
 
@@ -17,25 +18,65 @@ namespace Experimental.Common.Objects
   {
     public new static Substance Null => new Substance();
 
-    public static Substance Create
-      ([NotNull] IGuild guild, [NotNull] Action<SubstanceBuilder> _) =>
-      Global.GetStore(guild).CreateObject<Substance>(_);
-
-    public static Substance Create
-      ([NotNull] IGuild guild, string name, string displayName = null, MassUnit baseUnit = MassUnit.Undefined, SubstanceCategory category = SubstanceCategory.Undefined) =>
-      Create(guild, x => x
-        .WithName(name)
-        .WithDisplayName(displayName)
-        .WithBaseUnit(baseUnit)
-        .WithCategory(category));
-
-    internal Substance(Guid guid) : base(guid)
+    public static Substance CreateInstance
+      ([NotNull] Action<SubstanceBuilder> _)
     {
+      if (Global.Store == null)
+      {
+        Global.Store = new Store();
+      }
+
+      var sb = new SubstanceBuilder();
+      _(sb);
+
+      return sb.Build();
+    }
+
+    public static Substance CreateInstance
+    (
+      string name,
+      string displayName = null,
+      string[] aliases = null,
+      string imageUrl = null,
+      SubstanceCategory category = SubstanceCategory.Undefined,
+      MassUnit baseUnit = MassUnit.Undefined,
+      Color? color = null) =>
+      CreateInstance(
+        x => x
+         .WithName(name)
+         .WithDisplayName(displayName)
+         .WithBaseUnit(baseUnit)
+         .WithCategory(category)
+         .WithImageUrl(imageUrl)
+         .AddAliases(aliases)
+      );
+
+    public Substance
+    (
+      string name = null,
+      string displayName = null,
+      string description = null,
+      string[] aliases = null,
+      string imageUrl = null,
+      SubstanceCategory category = SubstanceCategory.Undefined,
+      MassUnit baseUnit = MassUnit.Undefined,
+      Color? color = null) : base(
+      Guid.NewGuid()
+    )
+    {
+      Name = name;
+      DisplayName = displayName;
+      Description = description;
+      Aliases = aliases;
+      ImageUrl = imageUrl;
+      Category = category;
+      BaseUnit = baseUnit;
+      Color = color;
     }
 
     public Substance()
     {
-      Color = Color.Default;
+      Color = Discord.Color.Default;
       BaseUnit = MassUnit.Undefined;
       Category = SubstanceCategory.Undefined;
     }
@@ -48,8 +89,9 @@ namespace Experimental.Common.Objects
 
     public string ImageUrl { get; internal set; }
 
-    public Color Color { get; internal set; }
+    public Color? Color { get; internal set; }
     public MassUnit BaseUnit { get; internal set; }
+
     public SubstanceCategory Category { get; internal set; }
 
     public override JObject ToJson()
@@ -61,7 +103,7 @@ namespace Experimental.Common.Objects
       _["display_name"] = DisplayName;
       _["description"] = Description;
       _["image_url"] = ImageUrl;
-      _["color"] = Color.RawValue;
+      _["color"] = Color?.RawValue;
       _["base_unit"] = (int)BaseUnit;
       _["category"] = (int)Category;
 

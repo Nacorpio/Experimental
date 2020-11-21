@@ -90,7 +90,11 @@ namespace Experimental.Common.Builders
       return new TextChat(Guid.NewGuid())
       {
         Name = Name,
-        Rules = Rules
+        Rules = Rules,
+        IsNsfw = IsNsfw,
+        Position = Position,
+        CategoryId = CategoryId,
+        SlowModeInterval = SlowModeInterval
       };
     }
   }

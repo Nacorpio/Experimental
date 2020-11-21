@@ -93,6 +93,20 @@ namespace Experimental.Common.Storage
       return @object;
     }
 
+    /// <summary>
+    /// Creates a new managed object of the specified type using the specified arguments.
+    /// </summary>
+    /// <param name="type">The managed object type to use.</param>
+    /// <param name="args">The arguments.</param>
+    /// <returns>A reference to the created object.</returns>
+    public ManagedObject CreateObject([NotNull] Type type, params object[] args)
+    {
+      var @object = (ManagedObject) Activator.CreateInstance(type, args);
+      InitializeObject(@object);
+
+      return @object;
+    }
+
 
     /// <summary>
     /// Destroys the specified managed object.
@@ -193,7 +207,13 @@ namespace Experimental.Common.Storage
     public IEnumerable<TObject> GetObjects<TObject>()
       where TObject : ManagedObject, new()
     {
-      return _managers.TryGetValue(typeof(TObject), out var manager) ? manager as IManager<TObject> : null;
+      if (!_managers.TryGetValue(typeof(TObject), out var manager))
+      {
+        manager = new Manager<TObject>(this);
+        _managers.Add(typeof(TObject), manager);
+      }
+
+      return (IEnumerable<TObject>)manager;
     }
 
 

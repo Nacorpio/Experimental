@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 using Discord;
 
@@ -7,16 +8,39 @@ using Newtonsoft.Json.Linq;
 
 namespace Experimental.Common.Templates
 {
+
   public class EmbedTemplate : TemplateBase
   {
-    public EmbedTemplate(Guid guid) : base(guid)
+    public EmbedTemplate
+    (
+      string title = null,
+      string description = null,
+      string url = null,
+      string imageUrl = null,
+      string thumbnailUrl = null,
+      Color? color = null,
+      DateTimeOffset? timestamp = null,
+      EmbedFooter? footer = null,
+      List<(string, object, bool)> fields = null)
+      : base(Guid.NewGuid())
     {
+      Title = title;
+      Description = description;
+      Url = url;
+      Color = color;
+      Timestamp = timestamp;
+      ImageUrl = imageUrl;
+      ThumbnailUrl = thumbnailUrl;
+      FooterText = footer?.Text;
+      FooterIconUrl = footer?.IconUrl;
+      Fields = fields;
     }
 
-    protected EmbedTemplate()
+    public EmbedTemplate()
     {
-      Color = Color.Default;
-      Timestamp = DateTimeOffset.MinValue;
+      Color = null;
+      Timestamp = null;
+      Fields = null;
     }
 
     public string Title { get; internal set; }
@@ -29,8 +53,8 @@ namespace Experimental.Common.Templates
     public string FooterText { get; internal set; }
     public string FooterIconUrl { get; internal set; }
 
-    public Color Color { get; internal set; }
-    public DateTimeOffset Timestamp { get; internal set; }
+    public Color? Color { get; internal set; }
+    public DateTimeOffset? Timestamp { get; internal set; }
 
     public List<(string name, object value, bool inline)> Fields { get; internal set; }
 
@@ -42,9 +66,9 @@ namespace Experimental.Common.Templates
        .WithImageUrl(ImageUrl)
        .WithThumbnailUrl(ThumbnailUrl)
        .WithUrl(Url)
-       .WithColor(Color)
+       .WithColor(Color ?? Discord.Color.Default)
        .WithFooter(FooterText, FooterIconUrl)
-       .WithTimestamp(Timestamp);
+       .WithTimestamp(Timestamp ?? DateTimeOffset.Now);
 
       foreach (var (name, value, inline) in Fields)
       {

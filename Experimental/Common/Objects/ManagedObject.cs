@@ -35,7 +35,7 @@ namespace Experimental.Common.Objects
     /// <summary>
     /// Initializes a new instance of the <see cref="ManagedObject"/> class.
     /// </summary>
-    protected ManagedObject()
+    public ManagedObject()
     {
       Guid = Guid.Empty;
 

@@ -107,7 +107,19 @@ namespace Experimental.API
     /// <returns>A collection of all managed objects.</returns>
     IEnumerable<TObject> GetObjects<TObject>()
       where TObject : ManagedObject, new();
+
+    /// <summary>
+    /// Returns the manager for managed object type <see cref="TObject"/>.
+    /// </summary>
+    /// <typeparam name="TObject">The managed object type.</typeparam>
+    /// <returns>A reference to the manager, if found; otherwise, <c>null</c>.</returns>
     IManager<TObject> GetManager<TObject>() where TObject : ManagedObject, new();
+
+    /// <summary>
+    /// Returns the manager for the specified managed type.
+    /// </summary>
+    /// <param name="type">The managed type to get the manager for.</param>
+    /// <returns>A reference to the manager, if found; otherwise, <c>null</c>.</returns>
     IManager GetManager([NotNull] Type type);
   }
 

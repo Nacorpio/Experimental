@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 
-namespace Experimental.API
+namespace Experimental.API.Serialization
 {
 
   /// <summary>

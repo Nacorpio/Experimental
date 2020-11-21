@@ -16,8 +16,10 @@ namespace Experimental.Common.Objects.Data
 
     public SubstanceUserDoseInfo()
     {
-      UserId = null;
+      Route = SubstanceRouteType.Undefined;
       SubstanceGuid = Guid.Empty;
+
+      UserId = null;
       TakenAt = null;
       Amount = null;
     }
@@ -29,6 +31,9 @@ namespace Experimental.Common.Objects.Data
     [JsonProperty("substance_guid")]
     public Guid SubstanceGuid { get; internal set; }
 
+
+    [JsonProperty("route")]
+    public SubstanceRouteType Route { get; internal set; }
 
     [JsonProperty("taken_at")]
     public DateTimeOffset? TakenAt { get; internal set; }
@@ -45,6 +50,7 @@ namespace Experimental.Common.Objects.Data
       _["substance_guid"] = SubstanceGuid;
       _["taken_at"] = TakenAt;
       _["amount"] = Amount.ToString();
+      _["route"] = (int)Route;
 
       return _;
     }
@@ -57,6 +63,7 @@ namespace Experimental.Common.Objects.Data
       SubstanceGuid = json.Value<Guid>("substance_guid");
       TakenAt = json.Value<DateTimeOffset?>("taken_at");
       Amount = Mass.Parse(json.Value<string>("amount"));
+      Route = (SubstanceRouteType)json.Value<int>("route");
     }
   }
 

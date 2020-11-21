@@ -9,11 +9,13 @@ using Experimental.Common.Objects;
 
 namespace Experimental.Common.Modules
 {
-  public class TestCommands : ModuleBase<SocketCommandContext>
+
+  [Group("session")]
+  public class SessionModule : ModuleBase<SocketCommandContext>
   {
     [Command("start")]
     [RequireContext(ContextType.Guild)]
-    public async Task Start()
+    public async Task Begin()
     {
       var store = Global.GetStore(Context.Guild);
 

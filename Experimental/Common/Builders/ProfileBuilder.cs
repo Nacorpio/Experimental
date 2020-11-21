@@ -3,8 +3,9 @@
 using Discord;
 
 using Experimental.API;
+using Experimental.Common.Objects;
 
-namespace Experimental.Common.Objects
+namespace Experimental.Common.Builders
 {
 
   public class ProfileBuilder : BuilderBase<Profile>

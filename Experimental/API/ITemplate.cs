@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Experimental.API.Serialization;
+
 namespace Experimental.API
 {
 

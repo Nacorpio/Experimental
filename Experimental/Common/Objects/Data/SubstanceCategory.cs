@@ -9,7 +9,8 @@
     Psychedelic,
     Dissociative,
     Deliriant,
-    Nootropic
+    Nootropic,
+    Cannabinoid
   }
 
 }

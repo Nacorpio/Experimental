@@ -57,6 +57,9 @@ namespace Experimental.Common.Storage
         return;
       }
 
+      @object.Store = Store;
+      @object.Guild = Store.Community?.Guild;
+
       _objects.Add(@object.Guid, @object);
     }
 
@@ -67,6 +70,18 @@ namespace Experimental.Common.Storage
     public void Add(ManagedObject @object)
     {
       Add(@object as TObject);
+    }
+
+    /// <summary>
+    /// Adds a collection of managed objects to the <see cref="IManager"/>.
+    /// </summary>
+    /// <param name="objects"></param>
+    public void AddRange(IEnumerable<ManagedObject> objects)
+    {
+      foreach (var @object in objects)
+      {
+        Add(@object);
+      }
     }
 
     /// <summary>

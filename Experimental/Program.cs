@@ -13,7 +13,7 @@ namespace Experimental
 
   class Program
   {
-    public const string ClientToken = "NzQ4NTYzMDc0MDAwMjI0NDQ3.X0fPsA.5S2AbGl0-B7QpeU9ukUJWIhU6IE";
+    public const string ClientToken = "NzQ4NTYzMDc0MDAwMjI0NDQ3.X0fPsA.vZedp29-9Etmz_Hyb35_qMcwvMI";
 
     private static void Main(string[] args)
     {
@@ -24,11 +24,11 @@ namespace Experimental
     {
       var services = ConfigureServices();
 
+      await Global.PrepareStoresAsync();
+
       await services
        .GetRequiredService<CommandHandlingService>()
        .InitializeAsync();
-
-      await Global.PrepareStoresAsync();
 
       await Global.Client.LoginAsync(TokenType.Bot, ClientToken);
       await Global.Client.StartAsync();

@@ -29,11 +29,19 @@ namespace Experimental.API
     void Add(ManagedObject @object);
 
     /// <summary>
+    /// Adds a collection of managed objects to the <see cref="IManager"/>.
+    /// </summary>
+    /// <param name="objects"></param>
+    void AddRange(IEnumerable <ManagedObject> objects);
+
+
+    /// <summary>
     /// Removes the specified managed object from the <see cref="IManager"/>.
     /// </summary>
     /// <param name="object">The managed object to remove.</param>
     /// <returns><c>true</c> if the managed object was removed; otherwise, <c>false</c>.</returns>
     bool Remove(ManagedObject @object);
+
 
     /// <summary>
     /// Returns a value indicating whether the specified managed object is contained in the <see cref="IManager"/>.
